@@ -87,6 +87,7 @@
         "aria": "Embed media",
 
         "defaults": {
+            "onEmbedError": function(){},
             "msgSelectOnlyUrl": "Seçtiğiniz metin geçerli bir URL değil!",
             "msgSelectOnlyEmbadableUrl": "Seçtiğiniz URL desteklenmiyor!",
             "oembedProxy": "http://iframe.ly/api/oembed?api_key=APIKEY_HERE&url=",
@@ -103,7 +104,6 @@
         "init": function() {
             MediumEditor.extensions.button.prototype.init.call(this);
             this.opts = MediumEditor.util.extend({}, this.defaults, this.embedOpts);
-
             var self = this,
                 doc = self.document,
                 $embeds = doc.querySelectorAll("." + self.opts.cssEmbeds);
@@ -187,8 +187,12 @@
 
             self.ajaxGet(self.opts.oembedProxy + selectedText,
                 function(data) {
-                    range.deleteContents();
-                    self.insertEmbed(data);
+                    if(data.result == "OEMBED_MISSING"){
+                        self.opts.onEmbedError(data);
+                    }else{
+                        range.deleteContents();
+                        self.insertEmbed(data);                        
+                    }
                 });
 
             self.base.checkContentChanged();
