@@ -187,7 +187,7 @@
 
             self.ajaxGet(self.opts.oembedProxy + selectedText,
                 function(data) {
-                    if(data.result == "OEMBED_MISSING"){
+                    if(data.result == "OEMBED_MISSING" || data.result == "OEMBED_UNKNOWN_ERROR"){
                         self.opts.onEmbedError(data);
                     }else{
                         range.deleteContents();
